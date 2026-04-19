@@ -26,7 +26,6 @@ pip install spotipy python-dotenv loguru
 ## Usage
 
 1. Prepare your input file with song titles (one per line). The script expects `songs.txt` by default.
-   - Note: If using `list.txt`, update `INPUT_FILE` in `main.py`
 
 2. Run the script:
 ```bash
