@@ -31,7 +31,7 @@ def get_or_create_playlist(sp, playlist_name, logger):
                 playlist.get("name") == playlist_name
                 and playlist.get("owner", {}).get("id") == current_user_id
             ):
-                logger.info("Using existing playlist: '{}'", playlist_name)
+                logger.info(f"Using existing playlist: '{playlist_name}'")
                 return playlist
 
         if not page.get("next"):
@@ -39,7 +39,7 @@ def get_or_create_playlist(sp, playlist_name, logger):
 
         offset += limit
 
-    logger.info("Creating playlist: '{}'...", playlist_name)
+    logger.info(f"Creating playlist: '{playlist_name}'...")
     return sp.current_user_playlist_create(name=playlist_name, public=False)
 
 
@@ -64,9 +64,7 @@ def normalize_redirect_uri(logger):
     updated_netloc = f"{userinfo}127.0.0.1{port}"
     updated_uri = urlunparse(parsed._replace(netloc=updated_netloc))
     os.environ["SPOTIPY_REDIRECT_URI"] = updated_uri
-    logger.warning(
-        "SPOTIPY_REDIRECT_URI used localhost. Updated to loopback IP: {}", updated_uri
-    )
+    logger.warning(f"SPOTIPY_REDIRECT_URI used localhost. Updated to loopback IP: {updated_uri}")
 
 
 def validate_spotify_env_vars():
@@ -126,7 +124,7 @@ def main():
     try:
         validate_spotify_env_vars()
     except ValueError as exc:
-        logger.error("{}", exc)
+        logger.error(f"{exc}")
         return
 
     # 1. Authenticate with Spotify
@@ -144,18 +142,17 @@ def main():
     missing_scopes = required_scopes - granted_scopes
     if missing_scopes:
         logger.error(
-            "Missing required Spotify scopes: {}. Ensure your Spotify app/user consent includes them and run again.",
-            ", ".join(sorted(missing_scopes)),
+            f"Missing required Spotify scopes: {', '.join(sorted(missing_scopes))}. Ensure your Spotify app/user consent includes them and run again."
         )
         return
 
     # Get current user ID
     user_id = sp.current_user()["id"]
-    logger.info("Authenticated as user: {}", user_id)
+    logger.info(f"Authenticated as user: {user_id}")
 
     # 2. Read and clean the text file
     if not os.path.exists(INPUT_FILE):
-        logger.error("{} not found.", INPUT_FILE)
+        logger.error(f"{INPUT_FILE} not found.")
         return
 
     with open(INPUT_FILE, "r", encoding="utf-8") as file:
@@ -176,15 +173,10 @@ def main():
             track_uri = tracks[0]["uri"]
             track_uris.append(track_uri)
             logger.success(
-                "[FOUND] {} -> {} - {}",
-                line,
-                tracks[0]["artists"][0]["name"],
-                tracks[0]["name"],
+                f"[FOUND] {line} -> {tracks[0]['artists'][0]['name']} - {tracks[0]['name']}"
             )
         else:
-            logger.warning(
-                "[FAILED] Could not find: {} (Searched as: {})", line, search_query
-            )
+            logger.warning(f"[FAILED] Could not find: {line} (Searched as: {search_query})")
 
     if not track_uris:
         logger.warning("No tracks found. Exiting.")
@@ -200,7 +192,7 @@ def main():
                 "'playlist-read-private' and 'playlist-modify-private' granted, then re-authorize "
                 "by deleting '.cache' and running again."
             )
-            logger.error("Spotify message: {}", str(exc))
+            logger.error(f"Spotify message: {exc}")
             return
         raise
 
@@ -214,7 +206,7 @@ def main():
         chunk = track_uris[i : i + chunk_size]
         sp.playlist_add_items(playlist_id, chunk)
 
-    logger.success("Success! Added {} tracks to your new playlist.", len(track_uris))
+    logger.success(f"Success! Added {len(track_uris)} tracks to your new playlist.")
 
 
 if __name__ == "__main__":
