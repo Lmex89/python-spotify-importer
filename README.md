@@ -43,7 +43,7 @@ source .venv/bin/activate
 python main.py
 ```
 
-The script delegates to the package workflow in `spotify_importer/app.py`.
+The script delegates to the package workflow in `spotify_playlist_importer/app.py`.
 
 The script will:
 - Authenticate with Spotify
@@ -54,7 +54,7 @@ The script will:
 
 ## Configuration
 
-Edit `spotify_importer/config.py` to change:
+Edit `spotify_playlist_importer/config.py` to change:
 - `INPUT_FILE`: Path to your input song list
 - `PLAYLIST_NAME`: Playlist title
 
@@ -62,10 +62,10 @@ Runtime pacing can be adjusted with environment variable:
 - `SPOTIPY_API_SLEEP_SECONDS` (default: `1.0`)
 
 Core responsibilities are split across modules:
-- `spotify_importer/bootstrap.py`: logger and `.env` loading/bootstrap
-- `spotify_importer/input_processing.py`: input reading and title cleanup
-- `spotify_importer/spotify_service.py`: Spotify auth, search, playlist operations
-- `spotify_importer/app.py`: end-to-end orchestration
+- `spotify_playlist_importer/bootstrap.py`: logger and `.env` loading/bootstrap
+- `spotify_playlist_importer/input_processing.py`: input reading and title cleanup
+- `spotify_playlist_importer/spotify_service.py`: Spotify auth, search, playlist operations
+- `spotify_playlist_importer/app.py`: end-to-end orchestration
 
 ## Notes
 

@@ -1,7 +1,7 @@
 """CLI entry point for the Spotify playlist importer."""
 
-from spotify_importer import run_import
-from spotify_importer.bootstrap import get_logger
+from spotify_playlist_importer import run_import
+from spotify_playlist_importer.bootstrap import get_logger
 
 
 def main() -> None:
