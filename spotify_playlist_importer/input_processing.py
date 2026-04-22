@@ -1,6 +1,7 @@
 """Input file reading and song title normalization."""
 
 import re
+from venv import logger
 
 
 def clean_song_title(raw_title: str) -> str:
@@ -8,9 +9,13 @@ def clean_song_title(raw_title: str) -> str:
     Sanitizes the input string for better search accuracy.
     Removes text in parentheses/brackets like '(Official Video)'.
     """
+    logger.debug(f"Cleaning song title: '{raw_title}'")
     cleaned = re.sub(r"\(.*?\)|\[.*?\]", "", raw_title)
     cleaned = re.sub(
-        r"Official Video|Official Music Video|4K|ft\\.", "", cleaned, flags=re.IGNORECASE
+        r"Official Video|Official Music Video|4K|ft\\.",
+        "",
+        cleaned,
+        flags=re.IGNORECASE,
     )
     return cleaned.strip()
 

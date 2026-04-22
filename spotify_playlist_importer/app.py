@@ -6,7 +6,13 @@ from http import HTTPStatus
 import spotipy
 
 from .bootstrap import get_logger, load_environment, normalize_redirect_uri
-from .config import INPUT_FILE, PLAYLIST_NAME, get_api_call_sleep_seconds, validate_spotify_env_vars
+from .config import (
+    INPUT_FILE,
+    PLAYLIST_NAME,
+    REQUIRED_SCOPES,
+    get_api_call_sleep_seconds,
+    validate_spotify_env_vars,
+)
 from .input_processing import read_song_lines
 from .spotify_service import (
     add_tracks_to_playlist,
@@ -28,12 +34,8 @@ def run_import() -> None:
         logger.error(f"{exc}")
         return
 
-    required_scopes = {
-        "playlist-modify-private",
-        "playlist-read-private",
-    }
     try:
-        sp = authenticate_spotify(required_scopes)
+        sp = authenticate_spotify(REQUIRED_SCOPES)
     except ValueError as exc:
         logger.error(f"{exc}")
         return

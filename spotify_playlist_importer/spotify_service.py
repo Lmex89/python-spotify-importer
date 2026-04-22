@@ -76,8 +76,10 @@ def resolve_track_uris(
     logger.info("Resolving tracks...")
     for line in raw_lines:
         search_query = clean_song_title(line)
+        logger.debug(f"Searching for track: '{search_query}'")
         results = sp.search(q=search_query, limit=1, type="track")
         if api_call_sleep_seconds > 0:
+            logger.debug(f"Sleeping for {api_call_sleep_seconds} seconds to respect API rate limits...")
             time.sleep(api_call_sleep_seconds)
         tracks = results.get("tracks", {}).get("items", [])
 
@@ -88,7 +90,9 @@ def resolve_track_uris(
                 f"[FOUND] {line} -> {tracks[0]['artists'][0]['name']} - {tracks[0]['name']}"
             )
         else:
-            logger.warning(f"[FAILED] Could not find: {line} (Searched as: {search_query})")
+            logger.warning(
+                f"[FAILED] Could not find: {line} (Searched as: {search_query})"
+            )
 
     return track_uris
 

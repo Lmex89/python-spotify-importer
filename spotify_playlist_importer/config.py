@@ -11,6 +11,10 @@ REQUIRED_ENV_VARS = (
 )
 PLAYLIST_PAGE_LIMIT = 50
 PLAYLIST_ADD_CHUNK_SIZE = 100
+REQUIRED_SCOPES = {
+    "playlist-modify-private",
+    "playlist-read-private",
+}
 
 
 def get_api_call_sleep_seconds() -> float:
