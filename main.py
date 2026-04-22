@@ -136,8 +136,11 @@ def main():
     scope = " ".join(sorted(required_scopes))
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
-    # Force token retrieval so Spotipy can re-authorize when cached scopes are insufficient.
-    token_info = sp.auth_manager.get_access_token(as_dict=True, check_cache=True)
+    # Prefer cached token details (recommended by Spotipy) and trigger auth only if needed.
+    token_info = sp.auth_manager.get_cached_token()
+    if not token_info:
+        sp.auth_manager.get_access_token(check_cache=False)
+        token_info = sp.auth_manager.get_cached_token()
     granted_scopes = set((token_info or {}).get("scope", "").split())
     missing_scopes = required_scopes - granted_scopes
     if missing_scopes:
