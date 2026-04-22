@@ -9,12 +9,18 @@ A Python script that imports song titles from a text file, resolves them to Spot
 
 ## Installation
 
-1. Install dependencies:
+1. (Optional but recommended) Create and activate a virtual environment:
 ```bash
-pip install spotipy python-dotenv loguru
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-2. Set up environment variables:
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+3. Set up environment variables:
    - Copy `.env.example` to `.env`
    - Add your Spotify API credentials to `.env`:
      ```
@@ -25,12 +31,19 @@ pip install spotipy python-dotenv loguru
 
 ## Usage
 
-1. Prepare your input file with song titles (one per line). The script expects `songs.txt` by default.
+1. If you are using a virtual environment, activate it:
+```bash
+source .venv/bin/activate
+```
 
-2. Run the script:
+2. Prepare your input file with song titles (one per line). The script expects `songs.txt` by default.
+
+3. Run the script:
 ```bash
 python main.py
 ```
+
+The script delegates to the package workflow in `spotify_importer/app.py`.
 
 The script will:
 - Authenticate with Spotify
@@ -41,10 +54,18 @@ The script will:
 
 ## Configuration
 
-Edit `main.py` to change:
+Edit `spotify_importer/config.py` to change:
 - `INPUT_FILE`: Path to your input song list
-- Playlist name and description
-- Other Spotify API parameters
+- `PLAYLIST_NAME`: Playlist title
+
+Runtime pacing can be adjusted with environment variable:
+- `SPOTIPY_API_SLEEP_SECONDS` (default: `1.0`)
+
+Core responsibilities are split across modules:
+- `spotify_importer/bootstrap.py`: logger and `.env` loading/bootstrap
+- `spotify_importer/input_processing.py`: input reading and title cleanup
+- `spotify_importer/spotify_service.py`: Spotify auth, search, playlist operations
+- `spotify_importer/app.py`: end-to-end orchestration
 
 ## Notes
 
