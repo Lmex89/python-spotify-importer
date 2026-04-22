@@ -14,8 +14,8 @@ Guidance for AI coding agents working in this repository.
 - Logging via `loguru`
 
 ## Run Commands
-- Install dependency:
-  - `pip install spotipy python-dotenv loguru`
+- Install dependencies:
+  - `pip install -r requirements.txt`
 - Run script:
   - `python main.py`
 
@@ -33,19 +33,26 @@ Set Spotify OAuth credentials before running:
 - `SPOTIPY_CLIENT_SECRET`
 - `SPOTIPY_REDIRECT_URI`
 
-`main.py` loads `.env` first, validates these values, and then `SpotifyOAuth` reads them.
+`spotify_playlist_importer/bootstrap.py` loads `.env` and initialises the logger. `SpotifyOAuth` reads the validated values at auth time.
 
 ## Important Repo-Specific Pitfall
-- Ensure `INPUT_FILE` in `main.py` is set to `songs.txt` and the file exists in the project root.
+- `INPUT_FILE` is configured in `spotify_playlist_importer/config.py` (default: `songs.txt`). Ensure the file exists in the project root.
+- If playlist creation returns 403 after successful auth, delete `.cache` to force re-authorization (scopes may be stale).
 
 ## Code Conventions For This Repo
-- Keep logic in small functions (for example, `clean_song_title`).
+- Keep logic in small functions (for example, `clean_song_title` in `input_processing.py`).
 - Preserve clear console logging for found/failed track resolution.
 - Maintain Spotify API batching limit behavior (100 tracks per add request).
+- Use `current_user_playlist_create(...)` — not the deprecated `user_playlist_create(...)`.
 
 ## Key Files
-- `main.py`: OAuth, search, playlist creation, and batch add flow.
+- `main.py`: Thin CLI entry point; delegates to the package.
 - `songs.txt`: Example song-title input data.
+- `spotify_playlist_importer/bootstrap.py`: Logger initialisation and `.env` loading.
+- `spotify_playlist_importer/config.py`: Central configuration (`INPUT_FILE`, `PLAYLIST_NAME`, sleep interval).
+- `spotify_playlist_importer/input_processing.py`: Input reading and title cleanup.
+- `spotify_playlist_importer/spotify_service.py`: Spotify auth, search, and playlist operations.
+- `spotify_playlist_importer/app.py`: End-to-end orchestration (`run_import`).
 
 ## Agent Scope Note
 - Keep changes focused and minimal.

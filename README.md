@@ -11,8 +11,8 @@ A Python script that imports song titles from a text file, resolves them to Spot
 
 1. (Optional but recommended) Create and activate a virtual environment:
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv .venv_script
+source .venv_script/bin/activate
 ```
 
 2. Install dependencies:
@@ -33,7 +33,7 @@ pip install -r requirements.txt
 
 1. If you are using a virtual environment, activate it:
 ```bash
-source .venv/bin/activate
+source .venv_script/bin/activate
 ```
 
 2. Prepare your input file with song titles (one per line). The script expects `songs.txt` by default.
