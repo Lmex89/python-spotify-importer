@@ -13,12 +13,12 @@ PLAYLIST_PAGE_LIMIT = 50
 PLAYLIST_ADD_CHUNK_SIZE = 100
 
 
-def get_api_call_sleep_seconds():
+def get_api_call_sleep_seconds() -> float:
     """Read API sleep interval from environment."""
     return float(os.getenv("SPOTIPY_API_SLEEP_SECONDS", "1.0"))
 
 
-def validate_spotify_env_vars():
+def validate_spotify_env_vars() -> None:
     """Fail fast with actionable guidance if Spotify OAuth variables are missing."""
     missing = [var for var in REQUIRED_ENV_VARS if not os.getenv(var)]
     if missing:

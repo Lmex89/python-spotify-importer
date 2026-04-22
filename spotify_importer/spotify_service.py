@@ -1,15 +1,17 @@
 """Spotify API service helpers."""
 
 import time
+from typing import Sequence
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
+from .bootstrap import LoggerAbstract as LoggerLike
 from .config import PLAYLIST_ADD_CHUNK_SIZE, PLAYLIST_PAGE_LIMIT
 from .input_processing import clean_song_title
 
 
-def authenticate_spotify(required_scopes):
+def authenticate_spotify(required_scopes: set[str]) -> spotipy.Spotify:
     """Create an authenticated Spotipy client and validate granted scopes."""
     scope = " ".join(sorted(required_scopes))
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
@@ -31,7 +33,12 @@ def authenticate_spotify(required_scopes):
     return sp
 
 
-def get_or_create_playlist(sp, playlist_name, logger, limit=PLAYLIST_PAGE_LIMIT):
+def get_or_create_playlist(
+    sp: spotipy.Spotify,
+    playlist_name: str,
+    logger: LoggerLike,
+    limit: int = PLAYLIST_PAGE_LIMIT,
+) -> dict[str, object]:
     """Return an existing current-user playlist by name, or create it if missing."""
     current_user_id = sp.current_user()["id"]
     offset = 0
@@ -57,7 +64,12 @@ def get_or_create_playlist(sp, playlist_name, logger, limit=PLAYLIST_PAGE_LIMIT)
     return sp.current_user_playlist_create(name=playlist_name, public=False)
 
 
-def resolve_track_uris(sp, raw_lines, logger, api_call_sleep_seconds):
+def resolve_track_uris(
+    sp: spotipy.Spotify,
+    raw_lines: Sequence[str],
+    logger: LoggerLike,
+    api_call_sleep_seconds: float,
+) -> list[str]:
     """Resolve user-provided song titles into Spotify track URIs."""
     track_uris = []
 
@@ -82,12 +94,12 @@ def resolve_track_uris(sp, raw_lines, logger, api_call_sleep_seconds):
 
 
 def add_tracks_to_playlist(
-    sp,
-    playlist_id,
-    track_uris,
-    api_call_sleep_seconds,
-    chunk_size=PLAYLIST_ADD_CHUNK_SIZE,
-):
+    sp: spotipy.Spotify,
+    playlist_id: str,
+    track_uris: Sequence[str],
+    api_call_sleep_seconds: float,
+    chunk_size: int = PLAYLIST_ADD_CHUNK_SIZE,
+) -> None:
     """Add tracks to a playlist in chunked requests."""
     for i in range(0, len(track_uris), chunk_size):
         chunk = track_uris[i : i + chunk_size]

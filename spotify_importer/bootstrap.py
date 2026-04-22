@@ -2,10 +2,23 @@
 
 import importlib
 import os
+from typing import Protocol
 from urllib.parse import urlparse, urlunparse
 
 
-def load_environment():
+class LoggerAbstract(Protocol):
+    """Minimal logger interface used by this project."""
+
+    def info(self, message: str) -> object: ...
+
+    def warning(self, message: str) -> object: ...
+
+    def success(self, message: str) -> object: ...
+
+    def error(self, message: str) -> object: ...
+
+
+def load_environment() -> None:
     """Load .env values via python-dotenv and fail with a clear dependency message."""
     try:
         dotenv_module = importlib.import_module("dotenv")
@@ -17,7 +30,7 @@ def load_environment():
     dotenv_module.load_dotenv()
 
 
-def get_logger():
+def get_logger() -> LoggerAbstract:
     """Load loguru logger and fail with clear setup guidance if missing."""
     try:
         loguru_module = importlib.import_module("loguru")
@@ -27,7 +40,7 @@ def get_logger():
     return loguru_module.logger
 
 
-def normalize_redirect_uri(logger):
+def normalize_redirect_uri(logger: LoggerAbstract) -> None:
     """Replace localhost redirect URIs with loopback IP to avoid deprecation warnings."""
     redirect_uri = os.getenv("SPOTIPY_REDIRECT_URI", "").strip()
     if not redirect_uri:

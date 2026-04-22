@@ -16,7 +16,7 @@ from .spotify_service import (
 )
 
 
-def run_import():
+def run_import() -> None:
     """Run the song import workflow end-to-end."""
     logger = get_logger()
     load_environment()
